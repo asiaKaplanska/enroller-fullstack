@@ -1,16 +1,10 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import NewMeetingForm from "./NewMeetingForm";
 import MeetingsList from "./MeetingsList";
 
 export default function MeetingsPage({username}) {
     const [meetings, setMeetings] = useState([]);
     const [addingNewMeeting, setAddingNewMeeting] = useState(false);
-
-    // function handleNewMeeting(meeting) {
-    //     const nextMeetings = [...meetings, meeting];
-    //     setMeetings(nextMeetings);
-    //     setAddingNewMeeting(false);
-    // }
 
     async function handleNewMeeting(meeting) {
         const response = await fetch('/api/meetings', {
@@ -49,6 +43,17 @@ export default function MeetingsPage({username}) {
         });
         setMeetings(nextMeetings);
     }
+
+    useEffect(() => {
+        const fetchMeetings = async () => {
+            const response = await fetch(`/api/meetings`);
+            if (response.ok) {
+                const meetings = await response.json();
+                setMeetings(meetings);
+            }
+        };
+        fetchMeetings();
+    }, []);
 
     return (
         <div>
